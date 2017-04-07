@@ -16,8 +16,8 @@ main = withSystemRandom . asGenIO $ \rng -> do
   -- Create a population
   population <- generatePopulation 1000 (2, 1000) rng
 
-  -- Update it 1000 times
-  _ <- updateManyTimes 1000 population fitnessFunction rng
+  -- Update it 200 times
+  _ <- updateManyTimes 200 population fitnessFunction rng
 
   return ()
 
