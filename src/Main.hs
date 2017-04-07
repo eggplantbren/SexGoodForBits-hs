@@ -8,12 +8,14 @@ import System.Random.MWC
 main :: IO ()
 main = withSystemRandom . asGenIO $ \rng -> do
 
-  -- Generate and print a genome.
-  genome <- generateGenome 10 10 rng
-  print genome
+  -- Generate and print two genomes
+  father <- generateGenome 10 10 rng
+  mother <- generateGenome 10 10 rng
+  putStrLn $ "Mother = " ++ show mother
+  putStrLn $ "Father = " ++ show father
 
-  -- Mutate it
-  genome' <- mutate genome rng
-  print genome'
-
+  -- Breed them
+  unmutatedChild <- breed mother father rng
+  child <- mutate unmutatedChild rng
+  putStrLn $ "Child  = " ++ show child
 

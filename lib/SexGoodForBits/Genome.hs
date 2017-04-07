@@ -16,8 +16,6 @@ data Genome = Genome {
                        genes :: U.Vector Int
                      } deriving (Eq, Read, Show)
 
-
-
 -- Generate a random genome (from a uniform distribution
 -- over possible genomes) of the given range and length.
 generateGenome :: Int
@@ -48,4 +46,24 @@ mutate Genome {..} rng = do
 
   return $ Genome range genes''
 
+
+-- Breed two genomes to create a child
+breed :: Genome -> Genome
+      -> Gen RealWorld
+      -> IO Genome
+breed (Genome range1 genes1) (Genome range2 genes2) rng = do
+
+      -- A function in IO that chooses either x or y
+      -- depending on the outcome of a random bit
+      let pick x y = do
+                       choice <- uniformR (0, 1) rng :: IO Int
+                       let result = if choice == 0 then x else y
+                       return result
+
+      -- The child's genes
+      childGenes <- U.zipWithM pick genes1 genes2
+
+      let childRange = maximum (range1, range2)
+      let child = Genome childRange childGenes
+      return child
 
