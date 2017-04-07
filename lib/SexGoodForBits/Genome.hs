@@ -23,7 +23,8 @@ generateGenome :: Int
                -> Gen RealWorld
                -> IO Genome
 generateGenome theRange theLength rng = do
-  theGenes <- U.replicateM theLength $ uniformR (0, theRange-1) rng
+  let rand = uniformR (0, theRange - 1) rng :: IO Int
+  theGenes <- U.replicateM theLength rand
   return $ Genome theRange theGenes
 
 
@@ -47,11 +48,11 @@ mutate Genome {..} rng = do
   return $ Genome range genes''
 
 
--- Breed two genomes to create a child
-breed :: Genome -> Genome
-      -> Gen RealWorld
-      -> IO Genome
-breed (Genome range1 genes1) (Genome range2 genes2) rng = do
+-- Crossover of two genomes to create an un-mutated child
+crossover :: Genome -> Genome
+          -> Gen RealWorld
+          -> IO Genome
+crossover (Genome range1 genes1) (Genome range2 genes2) rng = do
 
       -- A function in IO that chooses either x or y
       -- depending on the outcome of a random bit
@@ -66,4 +67,11 @@ breed (Genome range1 genes1) (Genome range2 genes2) rng = do
       let childRange = maximum (range1, range2)
       let child = Genome childRange childGenes
       return child
+
+
+-- Breed two genomes
+breed :: Genome -> Genome -> Gen RealWorld -> IO Genome
+breed mother father rng =
+  (crossover mother father rng) >>=
+  (\unmutatedChild -> mutate unmutatedChild rng)
 

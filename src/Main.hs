@@ -15,7 +15,6 @@ main = withSystemRandom . asGenIO $ \rng -> do
   putStrLn $ "Father = " ++ show father
 
   -- Breed them
-  unmutatedChild <- breed mother father rng
-  child <- mutate unmutatedChild rng
+  child <- breed mother father rng
   putStrLn $ "Child  = " ++ show child
 
