@@ -20,3 +20,9 @@ generatePopulation populationSize (genomeRange, genomeLength) rng = do
   genomes <- V.replicateM populationSize generateOne
   return $ Population genomes
 
+-- Evaluate given fitness function for each genome
+fitnesses :: (Genome -> Double)
+          -> Population
+          -> V.Vector Double
+fitnesses fitnessFunction (Population gs) = V.map fitnessFunction gs
+

@@ -1,6 +1,8 @@
 module Main where
 
 -- Imports
+import qualified Data.Vector.Unboxed as U
+import SexGoodForBits.Genome
 import SexGoodForBits.Population
 import System.Random.MWC
 
@@ -10,6 +12,13 @@ main = withSystemRandom . asGenIO $ \rng -> do
 
   -- Create a population
   population <- generatePopulation 1000 (2, 1000) rng
+
+  -- Define a fitness function
+  let fitnessFunction (Genome _ gs) = fromIntegral (U.sum gs)
+
+  -- Evaluate fitnesses
+  let fs = fitnesses fitnessFunction population
+  print fs
 
   return ()
 
