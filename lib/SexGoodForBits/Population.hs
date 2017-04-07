@@ -14,6 +14,13 @@ data Population = Population { populationAge :: Int,
                                populationGenomes :: V.Vector Genome }
     deriving (Eq, Read, Show)
 
+-- Print some stats
+printStats :: Population -> V.Vector Double -> IO ()
+printStats (Population {..}) fs = do
+  let meanFitness = V.sum fs / fromIntegral (V.length fs)
+  putStr $ "Population age = " ++ show populationAge ++ ", "
+  putStrLn $ "Mean fitness = " ++ show meanFitness ++ "."
+
 -- Generate an initial population
 generatePopulation :: Int
                    -> (Int, Int)
@@ -69,6 +76,8 @@ update :: Population
 update pop@(Population {..}) fitnessFunction rng = do
   let n  = V.length populationGenomes
       fs = fitnesses fitnessFunction pop
+
+  printStats pop fs
 
   newGenomes <- V.replicateM n (generateOffspring pop fs rng)
   let !newPop = Population (populationAge + 1) newGenomes
