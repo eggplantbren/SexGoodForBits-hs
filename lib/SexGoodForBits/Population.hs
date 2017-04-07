@@ -1,3 +1,6 @@
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE RecordWildCards #-}
+
 module SexGoodForBits.Population where
 
 -- Imports
@@ -58,8 +61,16 @@ generateOffspring (Population _ genomes) fs rng = do
   j <- choose fs rng
   breed (genomes V.! i) (genomes V.! j) rng
 
----- Update population
---update :: Population -> Gen RealWorld -> IO Population
---update population rng = do
---  
+-- Update population
+update :: Population
+       -> (Genome -> Double)
+       -> Gen RealWorld
+       -> IO Population
+update pop@(Population {..}) fitnessFunction rng = do
+  let n  = V.length populationGenomes
+      fs = fitnesses fitnessFunction pop
+
+  newGenomes <- V.replicateM n (generateOffspring pop fs rng)
+  let !newPop = Population (populationAge + 1) newGenomes
+  return newPop
 
