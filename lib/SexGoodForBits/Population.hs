@@ -83,3 +83,17 @@ update pop@Population {..} fitnessFunction rng = do
   let !newPop = Population (populationAge + 1) newGenomes
   return newPop
 
+-- Update population many times
+updateManyTimes :: Int
+                -> Population
+                -> (Genome -> Double)
+                -> Gen RealWorld
+                -> IO Population
+updateManyTimes n pop fitnessFunction rng
+  | n == 0    = do
+                  printStats pop (fitnesses fitnessFunction pop)
+                  return pop
+  | otherwise = do
+                  newPop <- update pop fitnessFunction rng
+                  updateManyTimes (n-1) newPop fitnessFunction rng
+
