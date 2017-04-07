@@ -16,7 +16,7 @@ data Population = Population { populationAge :: Int,
 
 -- Print some stats
 printStats :: Population -> V.Vector Double -> IO ()
-printStats (Population {..}) fs = do
+printStats Population {..} fs = do
   let meanFitness = V.sum fs / fromIntegral (V.length fs)
   putStr $ "Population age = " ++ show populationAge ++ ", "
   putStrLn $ "Mean fitness = " ++ show meanFitness ++ "."
@@ -51,7 +51,7 @@ choose fs rng = do
                (\f -> if (fs V.! k) >= f then 1 else 0)
                fs :: V.Vector Int
 
-  let pAccept = fromIntegral (V.sum beaten) / (fromIntegral n)
+  let pAccept = fromIntegral (V.sum beaten) / fromIntegral n
   u <- uniform rng :: IO Double
 
   if u < pAccept then return k else choose fs rng
@@ -73,7 +73,7 @@ update :: Population
        -> (Genome -> Double)
        -> Gen RealWorld
        -> IO Population
-update pop@(Population {..}) fitnessFunction rng = do
+update pop@Population {..} fitnessFunction rng = do
   let n  = V.length populationGenomes
       fs = fitnesses fitnessFunction pop
 

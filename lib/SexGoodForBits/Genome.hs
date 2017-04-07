@@ -64,7 +64,7 @@ crossover (Genome range1 genes1) (Genome range2 genes2) rng = do
       -- The child's genes
       childGenes <- U.zipWithM pick genes1 genes2
 
-      let childRange = maximum (range1, range2)
+      let childRange = maximum [range1, range2]
       let child = Genome childRange childGenes
       return child
 
@@ -72,6 +72,5 @@ crossover (Genome range1 genes1) (Genome range2 genes2) rng = do
 -- Breed two genomes
 breed :: Genome -> Genome -> Gen RealWorld -> IO Genome
 breed mother father rng =
-  (crossover mother father rng) >>=
-  (\unmutatedChild -> mutate unmutatedChild rng)
+  crossover mother father rng >>= (`mutate` rng)
 
