@@ -46,6 +46,18 @@ choose fs rng = do
 
   if u < pAccept then return k else choose fs rng
 
+-- Generate an offspring from an existing population
+-- whose fitnesses are also provided.
+generateOffspring :: Population
+                  -> V.Vector Double
+                  -> Gen RealWorld
+                  -> IO Genome
+generateOffspring (Population _ genomes) fs rng = do
+  -- Choose the mother and father
+  i <- choose fs rng
+  j <- choose fs rng
+  breed (genomes V.! i) (genomes V.! j) rng
+
 ---- Update population
 --update :: Population -> Gen RealWorld -> IO Population
 --update population rng = do
