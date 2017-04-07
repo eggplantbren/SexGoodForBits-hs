@@ -33,7 +33,7 @@ generateGenome theRange theLength rng = do
 mutate :: Genome
        -> Gen RealWorld
        -> IO Genome
-mutate (Genome {..}) rng = do
+mutate Genome {..} rng = do
 
   -- The location to mutate
   location <- uniformR (0, U.length genes - 1) rng
@@ -47,4 +47,5 @@ mutate (Genome {..}) rng = do
   genes'' <- U.unsafeFreeze genes'
 
   return $ Genome range genes''
+
 
