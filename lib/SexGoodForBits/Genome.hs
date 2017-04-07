@@ -10,7 +10,7 @@ import System.Random.MWC
 
 -- Represent genomes by unboxed vectors of ints
 -- restricted to {0, 1, 2, ..., range - 1}
--- E.g. a binary genome would have range = 1.
+-- E.g. a binary genome would have range = 2.
 data Genome = Genome {
                        range :: Int,
                        genes :: U.Vector Int
