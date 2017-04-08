@@ -8,7 +8,10 @@ import System.Random.MWC
 
 -- Main action
 main :: IO ()
-main = withSystemRandom . asGenIO $ \rng -> do
+main = do
+
+  -- Setup RNG with fixed seed
+  rng <- System.Random.MWC.create
 
   -- Define a fitness function
   let fitnessFunction (Genome _ gs) = fromIntegral (U.sum gs)

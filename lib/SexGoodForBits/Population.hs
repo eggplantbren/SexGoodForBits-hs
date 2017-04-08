@@ -6,18 +6,19 @@ module SexGoodForBits.Population where
 -- Imports
 import Control.Monad.Primitive (RealWorld)
 import qualified Data.Vector as V
+import qualified Data.Vector.Unboxed as U
 import SexGoodForBits.Genome
 import System.Random.MWC
 
 -- Type for a Population
-data Population = Population { populationAge :: Int,
+data Population = Population { populationAge     :: {-# UNPACK #-} !Int,
                                populationGenomes :: V.Vector Genome }
     deriving (Eq, Read, Show)
 
 -- Print some stats
-printStats :: Population -> V.Vector Double -> IO ()
+printStats :: Population -> U.Vector Double -> IO ()
 printStats Population {..} fs = do
-  let meanFitness = V.sum fs / fromIntegral (V.length fs)
+  let meanFitness = U.sum fs / fromIntegral (U.length fs)
   putStr $ "Population age = " ++ show populationAge ++ ", "
   putStrLn $ "Mean fitness = " ++ show meanFitness ++ "."
 
@@ -34,24 +35,27 @@ generatePopulation populationSize (genomeRange, genomeLength) rng = do
 -- Evaluate given fitness function for each genome
 fitnesses :: (Genome -> Double)
           -> Population
-          -> V.Vector Double
-fitnesses fitnessFunction (Population _ gs) = V.map fitnessFunction gs
+          -> U.Vector Double
+fitnesses fitnessFunction (Population _ gs) = let
+    fs = V.map fitnessFunction gs
+  in
+    V.convert fs :: U.Vector Double
 
 -- Choose a genome from the population, with
 -- more probability for selecting good ones.
-choose :: V.Vector Double       -- Vector of fitnesses
+choose :: U.Vector Double       -- Vector of fitnesses
        -> Gen RealWorld
        -> IO Int
 choose fs rng = do
-  let n = V.length fs
+  let n = U.length fs
   k <- uniformR (0, n-1) rng :: IO Int
 
   -- Does the k'th fitness beat each other one?
-  let beaten = V.map
-               (\f -> if (fs V.! k) >= f then 1 else 0)
-               fs :: V.Vector Int
+  let beaten = U.map
+               (\f -> if (fs U.! k) >= f then 1 else 0)
+               fs :: U.Vector Int
 
-  let pAccept = fromIntegral (V.sum beaten) / fromIntegral n
+  let pAccept = fromIntegral (U.sum beaten) / fromIntegral n
   u <- uniform rng :: IO Double
 
   if u < pAccept then return k else choose fs rng
@@ -59,7 +63,7 @@ choose fs rng = do
 -- Generate an offspring from an existing population
 -- whose fitnesses are also provided.
 generateOffspring :: Population
-                  -> V.Vector Double
+                  -> U.Vector Double
                   -> Gen RealWorld
                   -> IO Genome
 generateOffspring (Population _ genomes) fs rng = do

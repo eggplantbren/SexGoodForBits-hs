@@ -12,7 +12,7 @@ import System.Random.MWC
 -- restricted to {0, 1, 2, ..., range - 1}
 -- E.g. a binary genome would have range = 2.
 data Genome = Genome {
-                       range :: Int,
+                       range :: {-# UNPACK #-} !Int,
                        genes :: U.Vector Int
                      } deriving (Eq, Read, Show)
 
