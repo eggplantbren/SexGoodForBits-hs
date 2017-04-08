@@ -19,8 +19,10 @@ data Population = Population { populationAge     :: {-# UNPACK #-} !Int,
 printStats :: Population -> U.Vector Double -> IO ()
 printStats Population {..} fs = do
   let meanFitness = U.sum fs / fromIntegral (U.length fs)
+      maxFitness  = U.maximum fs
   putStr $ "Population age = " ++ show populationAge ++ ", "
-  putStrLn $ "Mean fitness = " ++ show meanFitness ++ "."
+  putStr $ "mean fitness = " ++ show meanFitness ++ ", "
+  putStrLn $ "max fitness = " ++ show maxFitness
 
 -- Generate an initial population
 generatePopulation :: Int

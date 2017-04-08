@@ -1,8 +1,7 @@
 module Main where
 
 -- Imports
-import Data.Vector.Unboxed as U
-import SexGoodForBits.Genome
+import SexGoodForBits.Examples
 import SexGoodForBits.Population
 import System.Random.MWC
 
@@ -13,14 +12,11 @@ main = do
   -- Setup RNG with fixed seed
   rng <- System.Random.MWC.create
 
-  -- Define a fitness function
-  let fitnessFunction (Genome _ gs) = fromIntegral (U.sum gs)
-
   -- Create a population
-  population <- generatePopulation 1000 (2, 1000) rng
+  initialPop <- generatePopulation 1000 (2, 10) rng
 
   -- Update it 200 times
-  _ <- updateManyTimes 200 population fitnessFunction rng
+  _ <- updateManyTimes 200 initialPop simple rng
 
   return ()
 
